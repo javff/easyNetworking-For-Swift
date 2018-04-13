@@ -7,22 +7,7 @@
 //
 
 import XCTest
-import easyNetworking
-import ObjectMapper
 
-class TestingModel: Mappable{
-    
-    required init?(map: Map) {
-       
-        if map.JSON["nonce"] == nil {
-            return nil
-        }
-    }
-    
-    func mapping(map: Map) {
-        
-    }
-}
 
 
 
@@ -41,18 +26,6 @@ class easyNetworkingTests: XCTestCase {
     func testExample() {
         
         
-        let expectation =  XCTestExpectation(description: "testing http request")
-
-        ApiRest.shared.doRequestJSON(httpMethod: .get, url: "https://apihostit.technifiser.com/v1/countries", headers: ["Content-Type":"application/json"], parameters: nil) { (json, error ,status) in
-            
-            
-            print("hola")
-            expectation.fulfill()
-
-        }
-        
-        wait(for: [expectation], timeout: 10.0)
-
     }
     
     func testPerformanceExample() {
