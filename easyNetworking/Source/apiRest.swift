@@ -27,7 +27,7 @@ public typealias RefreshCompletion = (_ succeeded: Bool) -> Void
     /**
      adapter for add headers authorization
      */
-    @objc func adapter() -> URLRequest
+    @objc func adapter(urlRequest: URLRequest) -> URLRequest
     
     /**
      implement refresh token authorization, executed when recivied status 401 default
@@ -313,7 +313,7 @@ extension ApiRest: RequestAdapter, RequestRetrier{
     
     public func adapt(_ urlRequest: URLRequest) throws -> URLRequest {
         
-        return (self.delegate?.adapter())!
+        return (self.delegate?.adapter(urlRequest: urlRequest))!
         
     }
     
