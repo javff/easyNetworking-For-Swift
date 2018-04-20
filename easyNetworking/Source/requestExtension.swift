@@ -15,11 +15,9 @@ import AlamofireObjectMapper
 
 extension Request {
     public func debugLog() -> Self {
-        #if DEBUG
-            print("=======================================")
-            print(self)
-            print("=======================================")
-        #endif
+        debugPrint("=======================================")
+        debugPrint(self)
+        debugPrint("=======================================")
         return self
     }
 }

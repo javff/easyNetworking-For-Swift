@@ -276,9 +276,7 @@ public class ApiRest{
         
         // Console error log //
         
-        #if DEBUG
-            print(body)
-        #endif
+        debugPrint(body)
         
         var errorType: ECallBackErrorType!
         
