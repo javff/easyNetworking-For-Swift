@@ -82,15 +82,29 @@ public class ApiRest{
     */
 
      public func doRequestObject <T : BaseMappable> (_ type: T.Type,withAuthorization authorization:Bool = false , httpMethod:HTTPMethod, url: String, headers: [String : String]?,  parameters: Mappable?, callback: @escaping (T?,ErrorModel?) ->  Void)  {
-
+        
+        
         let sessionManager = Alamofire.SessionManager.default
         let endpoint = URL(string: url)!
         var request = URLRequest(url: endpoint)
+        
+        
+        
         request.httpMethod = httpMethod.rawValue
         request.allHTTPHeaderFields = headers
         
         if parameters != nil{
-            request.httpBody = try! JSONSerialization.data(withJSONObject: parameters!)
+            
+            if headers?["Content-Type"] == "application/x-www-form-urlencoded"{
+                
+                request = try! URLEncoding().encode(request, with: parameters?.toJSON())
+                
+            }else{
+                
+                let bodyData = parameters?.toJSON().queryString
+                let body = bodyData?.data(using: String.Encoding.utf8)
+                request.httpBody = body
+            }
         }
 
         request.timeoutInterval = 10
@@ -99,36 +113,22 @@ public class ApiRest{
             sessionManager.retrier = self
             sessionManager.adapter = self
         }
-
+        
         sessionManager.request(request).validate().debugLog().responseJSON { (response) in
             
-            if response.result.isFailure{
-                
-                let errorModel = ErrorModel(errorType: ECallBackErrorType.NoInternetConnection)
-                callback(nil,errorModel)
-                
-                guard let error = response.error else{
-                    return
-                }
+            if let error = response.error {
                 
                 if error._code == NSURLErrorTimedOut || error._code == NSURLErrorNetworkConnectionLost || error._code == NSURLErrorNotConnectedToInternet{
                     
-                    
                     print("Time Out/Connection Lost Error")
-                    
                     // call delegate conenction internet //
                     self.delegate?.handlerConnectionInternet?()
+                    
+                    let errorModel = ErrorModel(errorType: ECallBackErrorType.NoInternetConnection)
+                    callback(nil,errorModel)
+                    return
                 }
-                return
             }
-            
-            if response.response == nil{
-                
-                let errorModel = ErrorModel(errorType: ECallBackErrorType.UnknownError)
-                callback(nil,errorModel)
-                return
-            }
-            
             
             guard let safeResponse = response.response else{
                 
@@ -154,7 +154,17 @@ public class ApiRest{
         request.allHTTPHeaderFields = headers
         
         if parameters != nil{
-            request.httpBody = try! JSONSerialization.data(withJSONObject: parameters!)
+            
+            if headers?["Content-Type"] == "application/x-www-form-urlencoded"{
+                
+                request = try! URLEncoding().encode(request, with: parameters?.toJSON())
+                
+            }else{
+                
+                let bodyData = parameters?.toJSON().queryString
+                let body = bodyData?.data(using: String.Encoding.utf8)
+                request.httpBody = body
+            }
         }
         
         request.timeoutInterval = 10
@@ -166,29 +176,18 @@ public class ApiRest{
         
         sessionManager.request(request).validate().debugLog().responseJSON { (response) in
             
-            if response.result.isFailure{
-                
-                let errorModel = ErrorModel(errorType: ECallBackErrorType.NoInternetConnection)
-                callback([:],errorModel,-1)
-                
-                guard let error = response.error else{
-                    return
-                }
+            if let error = response.error {
                 
                 if error._code == NSURLErrorTimedOut || error._code == NSURLErrorNetworkConnectionLost || error._code == NSURLErrorNotConnectedToInternet{
+                    
                     print("Time Out/Connection Lost Error")
                     // call delegate conenction internet //
                     self.delegate?.handlerConnectionInternet?()
+                    
+                    let errorModel = ErrorModel(errorType: ECallBackErrorType.NoInternetConnection)
+                    callback([:],errorModel,-1)
+                    return
                 }
-                return
-            }
-
-            
-            if response.response == nil{
-                
-                let errorModel = ErrorModel(errorType: ECallBackErrorType.UnknownError)
-                callback([:],errorModel,-1)
-                return
             }
             
             
