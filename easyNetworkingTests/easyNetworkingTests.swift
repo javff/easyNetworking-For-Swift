@@ -106,7 +106,7 @@ class easyNetworkingTests: XCTestCase {
         let expectation = XCTestExpectation(description: "Get some sandwiches!")
         
         let endpoint = "http://192.168.2.50:5200/Auth/token"
-        let params = loginModel(username: "username", password: "password", clientId: "67926ee8f4fa4734ba9e5d1987e9d190", clientSecret: "fEEb3StA3YINz17ZNUf2X8kLDmP13F4qAX5GSclQaEjZTyuS2thFcIJpT1M6Y+glc0lb8rAEOIeSjZf3u7eyyg==")
+        let params = loginModel(username: "juan.vasquez@technifiser.com", password: ".America1", clientId: "67926ee8f4fa4734ba9e5d1987e9d190", clientSecret: "fEEb3StA3YINz17ZNUf2X8kLDmP13F4qAX5GSclQaEjZTyuS2thFcIJpT1M6Y+glc0lb8rAEOIeSjZf3u7eyyg==")
         let headers: [String:String] = [
             "Content-Type" : "application/x-www-form-urlencoded"
         ]
@@ -117,7 +117,6 @@ class easyNetworkingTests: XCTestCase {
                 
                 return
             }
-            
             // save tokens //
             print("save")
             expectation.fulfill()

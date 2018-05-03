@@ -89,21 +89,20 @@ public class ApiRest{
         var request = URLRequest(url: endpoint)
         
         
-        
         request.httpMethod = httpMethod.rawValue
         request.allHTTPHeaderFields = headers
         
         if parameters != nil{
             
-            if headers?["Content-Type"] == "application/x-www-form-urlencoded"{
+            if headers?["Content-Type"]?.lowercased() == "application/x-www-form-urlencoded"{
                 
                 request = try! URLEncoding().encode(request, with: parameters?.toJSON())
                 
             }else{
                 
-                let bodyData = parameters?.toJSON().queryString
-                let body = bodyData?.data(using: String.Encoding.utf8)
-                request.httpBody = body
+                let pjson = parameters?.toJSONString(prettyPrint: false)
+                let data = (pjson?.data(using: .utf8))! as Data
+                request.httpBody = data
             }
         }
 
@@ -112,6 +111,9 @@ public class ApiRest{
         if authorization{
             sessionManager.retrier = self
             sessionManager.adapter = self
+        }else{
+            sessionManager.retrier = nil
+            sessionManager.adapter = nil
         }
         
         sessionManager.request(request).validate().debugLog().responseJSON { (response) in
@@ -155,15 +157,15 @@ public class ApiRest{
         
         if parameters != nil{
             
-            if headers?["Content-Type"] == "application/x-www-form-urlencoded"{
+            if headers?["Content-Type"]?.lowercased() == "application/x-www-form-urlencoded"{
                 
                 request = try! URLEncoding().encode(request, with: parameters?.toJSON())
                 
             }else{
                 
-                let bodyData = parameters?.toJSON().queryString
-                let body = bodyData?.data(using: String.Encoding.utf8)
-                request.httpBody = body
+                let pjson = parameters?.toJSONString(prettyPrint: false)
+                let data = (pjson?.data(using: .utf8))! as Data
+                request.httpBody = data
             }
         }
         
@@ -172,6 +174,9 @@ public class ApiRest{
         if authorization{
             sessionManager.retrier = self
             sessionManager.adapter = self
+        }else{
+            sessionManager.retrier = nil
+            sessionManager.adapter = nil
         }
         
         sessionManager.request(request).validate().debugLog().responseJSON { (response) in
